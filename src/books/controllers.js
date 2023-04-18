@@ -13,7 +13,55 @@ const addBook = async (req, res) =>
                 }
             )
 
-            res.status(201).json({message: 'success', book:book})
+            res.status(201).json({message: book.title +' has been added successfully id: ' + book.id, book:book})
+        } 
+        catch (error) 
+        {
+            console.log(error)    
+        }
+
+    }
+
+    const getAllBooks = async (req, res) =>     
+    {
+        try 
+        {
+            console.log(req.body)
+            const books = await Book.findAll()
+
+            res.status(201).json({message: 'success (' + books.length + ') found', books:books})
+        } 
+        catch (error) 
+        {
+            console.log(error)    
+        }
+
+    }
+
+    const findBooks = async (req, res) =>     
+    {
+        try 
+        {
+            console.log(req.body)
+            const books = await Book.findAll({where:req.body})
+
+            res.status(201).json({message: 'success ' + books.length + ' found', books:books})
+        } 
+        catch (error) 
+        {
+            console.log(error)    
+        }
+
+    }
+
+    const deleteBook = async (req, res) =>     
+    {
+        try 
+        {
+            console.log(req.body)
+            await Book.destroy({where:req.body})
+
+            res.status(201).json({message: 'book using criteria ' + JSON.stringify(req.body) + ' successfully deleted'})
         } 
         catch (error) 
         {
@@ -24,5 +72,8 @@ const addBook = async (req, res) =>
 
 
 module.exports = {
-    addBook
+    addBook,
+    getAllBooks,
+    findBooks,
+    deleteBook
 }
