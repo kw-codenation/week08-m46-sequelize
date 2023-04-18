@@ -7,7 +7,7 @@ app.use(express.json())
 
 app.get('/health', (req, res) => 
     {
-        res.status(200).json({ message: 'App is healthyyyy' })
+        res.status(200).json({ message: 'App is healthy' })
     }
 )
 
