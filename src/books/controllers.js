@@ -29,7 +29,7 @@ const addBook = async (req, res) =>
             console.log(req.body)
             const books = await Book.findAll()
 
-            res.status(201).json({message: 'success (' + books.length + ') found', books:books})
+            res.status(201).json({message: 'success (' + books.length + ') found', books:books, count:books.length})
         } 
         catch (error) 
         {
@@ -70,10 +70,30 @@ const addBook = async (req, res) =>
 
     }
 
+    const updateBook = async (req, res) =>     
+    {
+        try 
+        {
+            console.log(req.body)
+            const book = await Book.update
+                                (req.body.criteria,
+                                {where:req.body.where}
+                                )
+
+            res.status(200).json({message: 'Update of book id (' + req.body.where.id + ') using criteria ' + JSON.stringify(req.body.criteria) + ' successful', book:book})
+        } 
+        catch (error) 
+        {
+            console.log(error)    
+        }
+
+    }
+
 
 module.exports = {
     addBook,
     getAllBooks,
     findBooks,
-    deleteBook
+    deleteBook,
+    updateBook
 }
