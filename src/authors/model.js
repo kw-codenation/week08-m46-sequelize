@@ -1,12 +1,14 @@
 const { DataTypes } = require('sequelize')
 const connection = require('../db/connection')
 
-const Author  = connection.define('Author', 
+const Author = connection.define('author', 
     {name:
         {type:DataTypes.STRING
             ,allowNull: false
             ,unique: true
         }
+    ,bname:
+        {type:DataTypes.STRING}
     ,bdate:
         {type:DataTypes.STRING}
     ,bplace:

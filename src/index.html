@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>books (sequelize)</title>
+<title>books sequelize</title>
 <style>
 body
 {
@@ -19,16 +19,38 @@ body
 
 .nav-item
 {
+	background-color:darkgreen;
+	border:solid 2px lightgreen;
+	border-radius:0.5vw;
+	color:lightgreen;
 	text-align:center;
 	margin:1vw;
+	width:10vw;
 	cursor:pointer;	
 }
-
-.page-nav-item
+.nav-item:hover
 {
+	background-color:lightgreen;
+	border-color:darkgreen;
+	color:darkgreen;
+}
+
+.action-button
+{
+	background-color:mediumspringgreen;
+	border:solid 2px forestgreen;
+	border-radius:1vw;
+	color:forestgreen;
 	text-align:center;
-	margin:1vw;
-	cursor:pointer;	
+	width:10vw;
+	margin:0.5vw;
+	cursor:pointer;
+}
+.action-button:hover
+{
+	background-color:forestgreen;
+	border-color:mediumspringgreen;
+	color:mediumspringgreen;
 }
 
 .books
@@ -45,6 +67,39 @@ body
 	margin:1vw;
 }
 
+.books-nav-item
+{
+	background-color:khahi;
+	border:solid 2px darkolivegreen;
+	color:darkolivegreen;
+	font-size:2.8vh;
+	text-align:center;
+	width:10vw;
+	padding:0.4vw;
+	margin:0.5vw;
+	cursor:pointer
+}
+.books-nav-item:hover
+{
+	background-color:darkolivegreen;
+	border-color:khahi;
+	color:khaki;
+}
+
+.books-list-item
+{
+	background-color:transparent;
+	border:none;
+	color:darkolivegreen;
+	font-size:3vh;
+	cursor:pointer;
+}
+.books-list-item:hover
+{
+	color:yellow;
+}
+
+
 .authors
 {
 	background-color:lime;
@@ -57,6 +112,38 @@ body
 	font-size:5vh;
 	color:darkgreen;
 	margin:1vw;
+}
+
+.authors-nav-item
+{
+	background-color:mediumseagreen;
+	border:solid 2px darkolivegreen;
+	color:darkolivegreen;
+	font-size:2.8vh;
+	text-align:center;
+	width:10vw;
+	padding:0.4vw;
+	margin:0.5vw;
+	cursor:pointer
+}
+.authors-nav-item:hover
+{
+	background-color:darkolivegreen;
+	border-color:mediumseagreen;
+	color:mediumseagreen;
+}
+
+.authors-list-item
+{
+	background-color:transparent;
+	border:none;
+	color:darkolivegreen;
+	font-size:3vh;
+	cursor:pointer;
+}
+.authors-list-item:hover
+{
+	color:yellow;
 }
 
 .genres
@@ -73,12 +160,45 @@ body
 	margin:1vw;
 }
 
-.view-book
+.genres-nav-item
 {
-	font-family:trebuchet ms;
-	color:darkgreen;
+	background-color:lightseagreen;
+	border:solid 2px darkolivegreen;
+	color:darkolivegreen;
+	font-size:2.8vh;
+	text-align:center;
+	width:10vw;
+	padding:0.4vw;
+	margin:0.5vw;
+	cursor:pointer
+}
+.genres-nav-item:hover
+{
+	background-color:darkolivegreen;
+	border-color:lightseagreen;
+	color:lightseagreen;
+}
+
+.genres-list-item
+{
+	background-color:transparent;
+	border:none;
+	color:greenyellow;
+	font-size:3vh;
+	cursor:pointer;
+}
+.genres-list-item:hover
+{
+	color:yellow;
+}
+
+.genres-view-genre
+{
+	font-family:century gothic;
+	font-size:5vh;
 }
 </style>
+
 <script>
 class Link
 {
@@ -97,6 +217,12 @@ class Link
 				,find:'/authors/find'
 				,update:'/authors/update'
 				,delete:'/authors/delete'
+				}
+			,genres:
+				{add:'/genres/add'
+				,find:'/genres/find'
+				,update:'/genres/update'
+				,delete:'/genres/delete'
 				}
 			}
 	}
@@ -205,247 +331,158 @@ const html = new Html()
 <body>
 <form name="page"></form>
 
-<form name="viewbook" hidden>
-	<table class="view-book" align="center">
+<form name="main" hidden>
+	<div align="center">
+		<div class="title">books (sequelize)</div>
+		<input type="button" class="nav-item" value="books" onclick="Action('books')">
+		<input type="button" class="nav-item" value="authors" onclick="Action('authors')">
+		<input type="button" class="nav-item" value="genres" onclick="Action('genres')">
+		{Display}
+	</div>
+</form>
+
+<form name="home" hidden>
+	<div align="center">home page</div>
+</form>
+
+<form name="display" hidden>
+	<div class="{Table}" align="center">
+		<div class="{Table}-sub-title">{Subtitle}</div>
+		<input type="button" class="{Table}-nav-item" value="list" onclick="List('{Table}')">
+		<input type="button" class="{Table}-nav-item" value="add" onclick="Add('{Table}')">
+		<input type="button" class="{Table}-nav-item" value="search" onclick="Search('{Table}')">
+		<input type="button" class="{Table}-nav-item" value="admin" onclick="Admin('{Table}')">
+		<div>{Results}</div>
+	</div>
+</form>
+
+<form name="book" hidden>
+	<table class="books-add" align="center">
 	<tr>
-		<td colspan="100%" align="center">view</td>
-	</tr>
-	<tr>
-		<td>id</td>
-		<td><i>{Id}</i></td>
+		<td colspan="100%" align="center">add a book</td>
 	</tr>
 	<tr>
 		<td>title</td>
-		<td><i>{Title}</td>
+		<td><input type="text" id="title"></td>
 	</tr>
 	<tr>
-		<td>author</td>
-		<td><i>{Author}</td>
+		<td>author id</td>
+		<td><input type="text" id="author"></td>
 	</tr>
 	<tr>
-		<td>genre</td>
-		<td><i>{Genre}</td>
-	</tr>
-	<tr>
-		<td colspan="100%">
-			<input type="button" class="action-button" value="delete" onclick="Delete('books', {Id})">
-			<input type="button" class="action-button" value="edit" onclick="Edit('books', {Id})">
-		</td>
-	</tr>
-	</table>
-</form>
-
-<form name="addbook" hidden>
-	<table class="view-book" align="center">
-	<tr>
-		<td colspan="100%" align="center">add</td>
-	</tr>
-	<tr>
-		<td>title</td>
-		<td><input type="text" id="book-title"></td>
-	</tr>
-	<tr>
-		<td>author</td>
-		<td><input type="text" id="book-author"></td>
-	</tr>
-	<tr>
-		<td>genre</td>
-		<td><input type="text" id="book-genre"></td>
-	</tr>
-	<tr>
-		<td colspan="100%">
-			<input type="button" class="action-button" value="submit" onclick="Add('books')">
-		</td>
-	</tr>
-	</table>
-</form>
-
-
-<form name="updatebook" hidden>
-	<table class="view-book" align="center">
-	<tr>
-		<td colspan="100%" align="center">update</td>
-	</tr>
-	<tr>
-		<td>id</td>
-		<td><input type="text" value="{Id}"></td>
-	</tr>
-	<tr>
-		<td>title</td>
-		<td><input type="text" id="book-title" value="{Title}"></td>
-		<td><input type="button" class="action-button" value="update title" onclick="Edit('books', 'title')"></td>
-	</tr>
-	<tr>
-		<td>author</td>
-		<td><input type="text" id="book-author" value="{Author}"></td>
-		<td><input type="button" class="action-button" value="edit author" onclick="Edit('books', 'author')"></td>
-	</tr>
-	<tr>
-		<td>genre</td>
-		<td><input type="text" value="{Genre}"></td>
-		<td><input type="button" class="action-button" value="edit genre" onclick="Edit('books', 'genre')"></td>
-	</tr>
-	</table>
-</form>
-
-<form name="viewauthor" hidden>
-	<table align="center" class="view-author">
-	<tr>
-		<td colspan="100%" align="center">view</td>
-	</tr>
-	<tr>
-		<td>id</td>
-		<td>{Id}</td>
-	</tr>
-	<tr>
-		<td>name</td>
-		<td>{Name}</td>
-	</tr>
-	<tr>
-		<td>date of birth</td>
-		<td>{Bday}</td>
-	</tr>
-	<tr>
-		<td>place of birth</td>
-		<td>{Bplace}</td>
-	</tr>
-	<tr>
-		<td colspan="100%">
-			<input type="button" class="action-button" value="delete" onclick="Delete('authors', {Id})">
-			<input type="button" class="action-button" value="edit" onclick="Edit('authors', {Id})">
-		</td>
-	</tr>
-	</table>
-</form>
-
-<form name="addauthor" hidden>
-	<table class="view-book" align="center">
-	<tr>
-		<td colspan="100%" align="center">add</td>
-	</tr>
-	<tr>
-		<td>title</td>
-		<td><input type="text" id="author-name"></td>
-	</tr>
-	<tr>
-		<td>author</td>
-		<td><input type="text" id="author-bdate"></td>
-	</tr>
-	<tr>
-		<td>genre</td>
-		<td><input type="text" id="author-bplace"></td>
+		<td>genre id</td>
+		<td><input type="text" id="genre"></td>
 	</tr> 
 	<tr>
 		<td colspan="100%">
-			<input type="button" class="action-button" value="submit" onclick="Add('authors')">
+			<input type="button" class="action-button" value="submit" onclick="Insert('books')">
 		</td>
 	</tr>
 	</table>
 </form>
 
-<form name="updatebook" hidden>
-	<table class="view-book" align="center">
+<form name="author" hidden>
+	<table class="authors-add" align="center">
 	<tr>
-		<td colspan="100%" align="center">update</td>
-	</tr>
-	<tr>
-		<td>id</td>
-		<td><input type="text" value="{Id}"></td>
+		<td colspan="100%" align="center">add an author</td>
 	</tr>
 	<tr>
 		<td>name</td>
-		<td><input type="text" id="author-name" value="{Name}"></td>
-		<td><input type="button" class="action-button" value="edit name" onclick="Edit('authors', 'name')"></td>
+		<td><input type="text" id="name"></td>
 	</tr>
 	<tr>
-		<td>birthdate</td>
-		<td><input type="text" id="author-bdate" value="{Bdate}"></td>
-		<td><input type="button" class="action-button" value="edit date" onclick="Edit('authors', 'bdate')"></td>
+		<td>birth name</td>
+		<td><input type="text" id="bname"></td>
+	</tr>
+	<tr>
+		<td>birth date</td>
+		<td><input type="text" id="bdate"></td>
 	</tr>
 	<tr>
 		<td>birth place</td>
-		<td><input type="text" value="{Bplace}"></td>
-		<td><input type="button" class="action-button" value="edit genre" onclick="Edit('authors', 'bplace')"></td>
+		<td><input type="text" id="bplace"></td>
+	</tr> 
+	<tr>
+		<td colspan="100%">
+			<input type="button" class="action-button" value="submit" onclick="Insert('authors')">
+		</td>
+	</tr>
+	</table>
+</form>
+
+<form name="genre" hidden>
+	<table class="genres-add" align="center">
+	<tr>
+		<td colspan="100%" align="center">add a genre</td>
+	</tr>
+	<tr>
+		<td>description</td>
+		<td><input type="text" id="descr"></td>
+	</tr>
+	<tr>
+		<td colspan="100%">
+			<input type="button" class="action-button" value="submit" onclick="Insert('genres')">
+		</td>
 	</tr>
 	</table>
 </form>
 </body>
 <script>
-function ShowPage(table, action='')
+function Start()
 {
-	let code = Title() + Nav()
-
-	if (action == '')
-	{
-		code += Home(table)
-	}
-	else
-	{
-		code += Action(table, action)
-	}
+	let code = main.innerHTML
+	code = code.replace('{Display}', home.innerHTML)
 
 	page.innerHTML = code
 }
 
-function Home(table='')
+function Action(table)
 {
+	const code = {}
 
-	let code = ''
+	code.display = display.innerHTML
+	code.display = code.display.replace('{Subtitle}', table)
+	code.display = code.display.replace(/{Table}/g, table)
+	code.display = code.display.replace('{Results}', 'home page for ' +  table)
 
-	if (table == '')
-	{
-		code = 'home page'
-	}
-	else
-	{
-		code = Page(table, 'home page for ' + table)
-	}
+	code.main = main.innerHTML
+	code.main = code.main.replace('{Display}', code.display)
 
-
-	return code
-}
-
-function Action(table, action)
-{
-	let code = Page(table)
-
-	switch (action)
-	{
-		case('list') : code += List(table);break;
-		case('add') : code += Add(table);break;
-		case('search') : code += Search(table);break;
-		case('admin') : code += Admin(table);break;
-	}
-
-	return code
+	page.innerHTML = code.main
 }
 
 function List(table)
 {
-	alert('link (' + table + '): ' + link.host + link.route[table].find)
-	const request = new XMLHttpRequest()
-	request.open('GET', link.host + link.route[table].find)
-	request.setRequestHeader('Content-Type', 'application/json')
-	request.setRequestHeader('Access-Control-Allow-Headers', 'Authorization,Content-Type')
-	request.setRequestHeader('Access-Control-Allow-Origin', '*')
-	request.send()
+	let code = {data:'', search:''}
+
+	if (table == 'books') code.search = JSON.stringify({"search": 'none'})
+
+	alert('code search: ' + code.search)
+
+	const request = Request('GET', link.route[table].find, code.search)
+
 	request.onload = function() 
 	{
+		code.display = display.innerHTML
+		code.display = code.display.replace('{Subtitle}', table)
+		code.display = code.display.replace(/{Table}/g, table)
+
 		if (request.status != 201) 
                 {
-			page.innerHTML = html.div('Error List() '+ table + ': ' + request.status + ': ' + request.statusText)
+			code.display = code.display.replace('{Results}', html.div('Error List() '+ table + ': ' + request.status + ': ' + request.statusText))	
                 }
                 else 
                 {
-			const code = {table:'', row:'', cell:'', input:'', div:'', page:''}
  
 			let data = JSON.parse(request.response)
-        
+
+			alert('data countt ' + data['count'])
+
 			if (data['count'] === 0)
                     	{
 				code.cell = html.cell('There are no documents on the "' + table + '" table', {style:'font-size:3vh'})
 				code.row = html.row(code.cell)
-				code.table += code.row
+				code.table = html.table(code.row)
                     	}
                     	else
                     	{
@@ -454,127 +491,233 @@ function List(table)
 					switch (table)
 					{
 						case 'books': 
-							const book = '{id:' + data['books'][i].id + ', title:`' + data['books'][i].title + '`' + ',author:`' + data['books'][i].author + '`' + ',genre:`' + data['books'][i].genre + '`' + '}'
-							code.input = html.input(data['books'][i].title, {type:'text', class:'list-item', click:'View(`books`, ' + book + ')', readonly:''}) 
+							const book = '{id:' + data[table][i].id + ', title:`' + data[table][i].title + '`' + ', author:`' + data[table][i].authorId + '`' + ', genre:`' + data[table][i].genreId + '`' + '}'
+							code.input = html.input(data[table][i].title, {type:'text', class:table + '-list-item', click:'View(`books`, ' + book + ')', readonly:''}) 
 							break
 						case 'authors': 
-							const author = '{id:' + data['author'][i].id + ', name:`' + data['authors'][i].name + '`' + ', bdate:`' + data['authors'][i].bdate + '`' + ', bplace:`' + data['authors'][i].bplace + '`' + '}'
-							code.input = html.input(data[table][i].name, {type:'text', class:'list-item'}) 
+							const author = '{id:' + data[table][i].id + ', name:`' + data[table][i].name + '`' + ', bname:`' + data[table][i].bname + '`' + ', bdate:`' + data[table][i].bdate + '`' + ', bplace:`' + data[table][i].bplace + '`' + '}'
+							code.input = html.input(data[table][i].name, {type:'text', class:table + '-list-item', click:'View(`' + table + '`, ' + author + ')', readonly:''}) 
+							break
+						case 'genres': 
+							const genre = '{id:' + data[table][i].id + ', descr:`' + data[table][i].descr + '`' + '}'
+							code.input = html.input(data[table][i].descr, {type:'text', class:table + '-list-item', click:'View(`' + table + '`, ' + genre + ')', readonly:''}) 
 							break
 					}
 
 					code.cell = html.cell(code.input)
 					code.row = html.row(code.cell)
-					code.table += code.row
+					code.data += code.row
                         	}
 			}
 
+			code.table = html.table(code.data)
 			code.div = html.div(html.table(code.table), {style:"height:50vh;overflow:auto"})
-			code.page = html.div(code.div, {class:'sub-title', align:'center'})
+			code.display = code.display.replace('{Results}', code.div)	
+		}
 
-			page.innerHTML = Title() + Nav() + Page(table, code.page)
-                }
+		code.main = main.innerHTML
+		code.main = code.main.replace('{Display}', code.display)
+
+		page.innerHTML = code.main
 	}
-
-}
-function View(table, data)
-{
-	let code = ''
-
-	switch (table)
-	{
-		case 'books':
-			code = viewbook.innerHTML
-			code = code.replace('{Id}', data.id)
-			code = code.replace('{Title}', data.title)
-			code = code.replace('{Author}', data.author)
-			code = code.replace('{Genre}', data.genre)
-			break
-		case 'authors':
-			code = viewauthor.innerHTML
-			code = code.replace('{Id}', data.id)
-			code = code.replace('{Name}', data.name)
-			code = code.replace('{Bdate}', data.bdate)
-			code = code.replace('{Bplace}', data.bplace)
-			break
-	}
-
-	page.innerHTML = Title() + Nav() + Page(table, code)
 }
 
 function Add(table)
 {
-	let code = ''
+	let code = {}
 
 	switch (table)
 	{
-		case 'books':
-			code = addbook.innerHTML
+		case 'books': 
+			code.results = book.innerHTML
 			break
-		case 'authors':
-			code = addauthor.innerHTML
+		case 'authors': 
+			code.results = author.innerHTML
+			break
+		case 'genres': 
+			code.results = genre.innerHTML
 			break
 	}
 
-	return code
+	code.display = display.innerHTML
+	code.display = code.display.replace('{Subtitle}', table)
+	code.display = code.display.replace(/{Table}/g, table)
+	code.display = code.display.replace('{Results}', code.results)
+
+
+
+	code.main = main.innerHTML
+	code.main = code.main.replace('{Display}', code.display)
+
+	page.innerHTML = code.main
 }
+
+function Insert(table)
+{
+	let code = {data:'', info:''}
+
+	switch (table)
+	{
+		case 'books': 
+			code.info = document.getElementById('title').value
+			code.json = JSON.stringify
+				(
+					{"title": document.getElementById('title').value
+					,"authorId": document.getElementById('author').value
+					,"genreId": document.getElementById('genre').value
+					}
+				)
+			break
+		case 'authors': 
+			code.info = document.getElementById('name').value
+			code.json = JSON.stringify
+				(
+					{"name": document.getElementById('name').value
+					,"bname": document.getElementById('bname').value
+					,"bdate": document.getElementById('bdate').value
+					,"bplace": document.getElementById('bplace').value
+					}
+				)
+			break
+		case 'genres': 
+			code.info = document.getElementById('descr').value
+			code.json = JSON.stringify
+				(
+					{"descr": document.getElementById('descr').value}
+				)
+			break
+	}
+
+	const request = Request('POST', link.route[table].add, code.json)
+
+	request.onload = function() 
+	{
+		if (request.status != 201) 
+                {
+			code.display = display.innerHTML
+			code.display = code.display.replace('{Subtitle}', table)
+			code.display = code.display.replace(/{Table}/g, table)
+			code.display = code.display.replace('{Results}', html.div('Error Insert() ' + table + ': ' + request.status + ': ' + request.statusText))	
+			
+			code.main = main.innerHTML
+			code.main = code.main.replace('{Display}', code.display)
+
+			page.innerHTML = code.main
+                }
+                else 
+                {
+			let data = JSON.parse(request.response)
+			View(table, data[table], data.message)
+		}
+
+
+	}
+}
+
 function Search(table)
 {
-	let code = 'search ' + table
+	let code = {}
 
-	return code
+	code.display = display.innerHTML
+	code.display = code.display.replace('{Subtitle}', table)
+	code.display = code.display.replace(/{Table}/g, table)
+	code.display = code.display.replace('{Results}', 'search results for ' +  table)
+
+	code.main = main.innerHTML
+	code.main = code.main.replace('{Display}', code.display)
+
+	page.innerHTML = code.main
 }
+
 function Admin(table)
 {
-	let code = 'admin for ' + table
+	let code = {}
 
-	return code
+	code.display = display.innerHTML
+	code.display = code.display.replace('{Subtitle}', table)
+	code.display = code.display.replace(/{Table}/g, table)
+	code.display = code.display.replace('{Results}', 'admin page for ' +  table)
+
+	code.main = main.innerHTML
+	code.main = code.main.replace('{Display}', code.display)
+
+	page.innerHTML = code.main
 }
 
-
-function Title()
+function View(table, row, message='')
 {
+	const code = {data:''}
 
-	return html.div('books (sequelize)', {align:'center', class:'title'})
+	code.display = display.innerHTML
+	code.display = code.display.replace('{Subtitle}', table)
+	code.display = code.display.replace(/{Table}/g, table)
 
-}
-
-function Nav()
-{
-	let nav = ['books', 'authors', 'genres']
-
-	const code = {div:'', item:''}
-
-	for (let item of nav)
+	for (let column in row)
 	{
-		code.item += html.input(item, {class:'nav-item', click:`ShowPage('` + item + `')`})
+		code.cell = html.cell(column)
+		code.cell += html.cell(row[column], {style:'font-style:italic'})
+		code.row = html.row(code.cell)
+		code.data += code.row
 	}
 
-	code.div = html.div(code.item, {align:'center'})
+	code.input = html.input('delete', {class:'action-button', click:'Delete(`' + table + '`, ' + row.id + ')'})
+	code.input += html.input('edit', {class:'action-button', click:'Edit(`' + table+ '`, ' + row + ')'})
 
-	return code.div
+	code.message = html.div(message, {align:'center'})
 
+	code.results = html.table(code.data) + code.input + code.message
+
+	code.display = code.display.replace('{Results}', code.results)
+
+	code.main = main.innerHTML
+	code.main = code.main.replace('{Display}', code.display)
+
+	page.innerHTML = code.main
 }
 
-function Page(table, data='')
+function Delete(table, id)
 {
-	let nav = ['list', 'add', 'search', 'admin']
+	const code = {}
 
-	const code = {page:'', subtitle:'', nav:'', action:''}
+	code.json = JSON.stringify({ "id": id })
 
-	for (let action of nav)
+	const request = Request('DELETE', link.route[table].delete, code.json)
+
+	request.onload = function() 
 	{
-		code.action += html.input(action, {class:'page-nav-item', click:`ShowPage('` + table + `', '` + action + `')`})
+		code.display = display.innerHTML
+		code.display = code.display.replace('{Subtitle}', table)
+		code.display = code.display.replace(/{Table}/g, table)
+
+		if (request.status != 203) 
+                {
+			code.display = code.display.replace('{Results}', html.div('Error Delete() ' + table + ': ' + request.status + ': ' + request.statusText))
+		}
+		else
+		{
+			let data = JSON.parse(request.response)
+			code.display = code.display.replace('{Results}', data.message)
+		}
+
+
+		code.main = main.innerHTML
+		code.main = code.main.replace('{Display}', code.display)
+	
+		page.innerHTML = code.main
 	}
-
-	code.subtitle = html.div(table, {class:table + '-sub-title', align:'center'})
-	code.nav = html.div(code.action, {align:'center'})
-	code.page = html.div(code.subtitle + code.nav + data, {class:table, align:'center'})
-
-	return code.page
-
 }
 
-ShowPage()
+function Request(method, route, data='')
+{
+	const request = new XMLHttpRequest()
+	request.open(method, link.host + route)
+	request.setRequestHeader('Content-Type', 'application/json')
+	request.setRequestHeader('Access-Control-Allow-Headers', 'Authorization,Content-Type')
+	request.setRequestHeader('Access-Control-Allow-Origin', '*')
+	request.send(data)
+
+	return request
+}
+Start()
 </script>
 </html>
