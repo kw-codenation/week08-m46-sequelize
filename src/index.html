@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>books sequelize</title>
+<title>books (sequelize)</title>
 <style>
 body
 {
@@ -37,20 +37,20 @@ body
 
 .action-button
 {
-	background-color:mediumspringgreen;
+	background-color: springgreen;
 	border:solid 2px forestgreen;
 	border-radius:1vw;
 	color:forestgreen;
-	text-align:center;
 	width:10vw;
+	text-align:center;
 	margin:0.5vw;
 	cursor:pointer;
 }
 .action-button:hover
 {
 	background-color:forestgreen;
-	border-color:mediumspringgreen;
-	color:mediumspringgreen;
+	border-color:springgreen;
+	color:springgreen;
 }
 
 .books
@@ -67,11 +67,18 @@ body
 	margin:1vw;
 }
 
+.books-action-title
+{
+	font-family:trebuchet ms;
+	font-size:3vh;
+	color:forestgreen;	
+}
+
 .books-nav-item
 {
-	background-color:khahi;
-	border:solid 2px darkolivegreen;
-	color:darkolivegreen;
+	background-color:seagreen;
+	border:solid 2px khaki;
+	color:khaki;
 	font-size:2.8vh;
 	text-align:center;
 	width:10vw;
@@ -81,24 +88,23 @@ body
 }
 .books-nav-item:hover
 {
-	background-color:darkolivegreen;
-	border-color:khahi;
-	color:khaki;
+	background-color:khaki;
+	border-color:seagreen;
+	color:seagreen;
 }
 
 .books-list-item
 {
 	background-color:transparent;
 	border:none;
-	color:darkolivegreen;
+	color:seagreen;
 	font-size:3vh;
 	cursor:pointer;
 }
 .books-list-item:hover
 {
-	color:yellow;
+	color:mediumseagreen;
 }
-
 
 .authors
 {
@@ -106,12 +112,20 @@ body
 	height:70vh;
 }
 
+
 .authors-sub-title
 {
 	font-family:verdana;
 	font-size:5vh;
 	color:darkgreen;
 	margin:1vw;
+}
+
+.authors-action-title
+{
+	font-family:trebuchet ms;
+	font-size:3vh;
+	color:seagreen;
 }
 
 .authors-nav-item
@@ -146,6 +160,7 @@ body
 	color:yellow;
 }
 
+
 .genres
 {
 	background-color:seagreen;
@@ -158,6 +173,13 @@ body
 	font-size:5vh;
 	color:darkgreen;
 	margin:1vw;
+}
+
+.genres-action-title
+{
+	font-family:trebuchet ms;
+	font-size:3vh;
+	color:springgreen;
 }
 
 .genres-nav-item
@@ -421,7 +443,7 @@ const html = new Html()
 	</tr>
 	<tr>
 		<td colspan="100%">
-			<input type="button" class="action-button" value="submit" onclick="Insert('genres')">
+			<input type="button" class="action-button" value="submit" onclick="Insert('genres', genre.descr)">
 		</td>
 	</tr>
 	</table>
@@ -453,13 +475,11 @@ function Action(table)
 
 function List(table)
 {
-	let code = {data:'', search:''}
+	let code = {data:'', criteria:''}
 
-	if (table == 'books') code.search = JSON.stringify({"search": 'none'})
+	if (table == 'books') code.criteria ='{"search":"none"}'
 
-	alert('code search: ' + code.search)
-
-	const request = Request('GET', link.route[table].find, code.search)
+	const request = Request('GET', link.route[table].find, code.criteria)
 
 	request.onload = function() 
 	{
@@ -476,13 +496,12 @@ function List(table)
  
 			let data = JSON.parse(request.response)
 
-			alert('data countt ' + data['count'])
-
 			if (data['count'] === 0)
                     	{
 				code.cell = html.cell('There are no documents on the "' + table + '" table', {style:'font-size:3vh'})
 				code.row = html.row(code.cell)
 				code.table = html.table(code.row)
+				code.data = code.table
                     	}
                     	else
                     	{
@@ -491,7 +510,7 @@ function List(table)
 					switch (table)
 					{
 						case 'books': 
-							const book = '{id:' + data[table][i].id + ', title:`' + data[table][i].title + '`' + ', author:`' + data[table][i].authorId + '`' + ', genre:`' + data[table][i].genreId + '`' + '}'
+							const book = '{id:' + data[table][i].id + ', title:`' + data[table][i].title + '`' + ',author:`' + data[table][i].author.name + '`' + ',genre:`' + data[table][i].genre.descr + '`' + '}'
 							code.input = html.input(data[table][i].title, {type:'text', class:table + '-list-item', click:'View(`books`, ' + book + ')', readonly:''}) 
 							break
 						case 'authors': 
@@ -544,8 +563,6 @@ function Add(table)
 	code.display = code.display.replace(/{Table}/g, table)
 	code.display = code.display.replace('{Results}', code.results)
 
-
-
 	code.main = main.innerHTML
 	code.main = code.main.replace('{Display}', code.display)
 
@@ -583,7 +600,7 @@ function Insert(table)
 			code.info = document.getElementById('descr').value
 			code.json = JSON.stringify
 				(
-					{"descr": document.getElementById('descr').value}
+					{"descr": author.name.descr}
 				)
 			break
 	}
@@ -607,7 +624,7 @@ function Insert(table)
                 else 
                 {
 			let data = JSON.parse(request.response)
-			View(table, data[table], data.message)
+			View(table, data[table], code.info + ' has been added to the table <i>' + table + '</i> successfully')
 		}
 
 
@@ -646,7 +663,7 @@ function Admin(table)
 
 function View(table, row, message='')
 {
-	const code = {data:''}
+	let code = {data:'', columns:[]}
 
 	code.display = display.innerHTML
 	code.display = code.display.replace('{Subtitle}', table)
@@ -654,18 +671,27 @@ function View(table, row, message='')
 
 	for (let column in row)
 	{
-		code.cell = html.cell(column)
+		if (Number.isInteger(row[column]))
+		{
+			code.columns.push("'" + column + "':" + row[column])
+		}
+		else
+		{
+			code.columns.push("'" + column + "':'" + row[column] + "'") 
+		}
+ 		code.cell = html.cell(column)
 		code.cell += html.cell(row[column], {style:'font-style:italic'})
 		code.row = html.row(code.cell)
 		code.data += code.row
 	}
 
-	code.input = html.input('delete', {class:'action-button', click:'Delete(`' + table + '`, ' + row.id + ')'})
-	code.input += html.input('edit', {class:'action-button', click:'Edit(`' + table+ '`, ' + row + ')'})
+	code.row = '{' + code.columns.join(',') + '}'
 
+	code.title = html.div('view ' + table, {class:table + '-action-title'})
+	code.input = html.input('delete', {class:'action-button', click:'Delete(`' + table + '`, ' + code.row + ')'})
+	code.input += html.input('edit', {class:'action-button', click:'Edit(`' + table + '`, ' + code.row + ')'})
 	code.message = html.div(message, {align:'center'})
-
-	code.results = html.table(code.data) + code.input + code.message
+	code.results = code.title + html.table(code.data) + code.input + code.message
 
 	code.display = code.display.replace('{Results}', code.results)
 
@@ -675,13 +701,12 @@ function View(table, row, message='')
 	page.innerHTML = code.main
 }
 
-function Delete(table, id)
+function Delete(table, row)
 {
-	const code = {}
 
-	code.json = JSON.stringify({ "id": id })
+	const code = {id:'{"id":' + row.id + '}'}
 
-	const request = Request('DELETE', link.route[table].delete, code.json)
+	const request = Request('DELETE', link.route[table].delete, code.id)
 
 	request.onload = function() 
 	{
@@ -691,19 +716,102 @@ function Delete(table, id)
 
 		if (request.status != 203) 
                 {
-			code.display = code.display.replace('{Results}', html.div('Error Delete() ' + table + ': ' + request.status + ': ' + request.statusText))
-		}
-		else
-		{
-			let data = JSON.parse(request.response)
-			code.display = code.display.replace('{Results}', data.message)
-		}
 
+			code.display = code.display.replace('{Results}', html.div('Error Delete() ' + table + ': ' + request.status + ': ' + request.statusText))
+                }
+                else 
+                {
+			let data = JSON.parse(request.response)
+
+			switch (table)
+			{
+				case 'books': code.message = 'Book ' + row.title + ' (id:' + row.id + ') has been deleted'
+				case 'authors': code.message = 'Author ' + row.name + ' (id:' + row.id + ') has been deleted'
+				case 'genres': code.message = 'Genre ' + row.descr + ' (id:' + row.id + ') has been deleted'
+			}
+	
+			code.display = code.display.replace('{Results}', html.div(row.message + ' (id:' + row.id + ') has been deleted from table <i>' + table))
+		}
 
 		code.main = main.innerHTML
 		code.main = code.main.replace('{Display}', code.display)
-	
+
 		page.innerHTML = code.main
+	}
+}
+
+function Edit(table, row)
+{
+	let code = {data:''}
+
+	code.display = display.innerHTML
+	code.display = code.display.replace('{Subtitle}', table)
+	code.display = code.display.replace(/{Table}/g, table)
+
+	for (let column in row)
+	{
+		if (column != 'id')
+		{
+			code.cell = html.cell(column)
+			code.input = html.input(row[column], {id:column, type:'text'})
+			code.cell += html.cell(code.input)
+			code.cell += html.cell(html.input('edit ' + column, {class:'action-button', click:'Update(`' + table + '`, ' + row.id + ', `' + column + '`, document.getElementById(`' + column + '`).value)'}))
+			code.row = html.row(code.cell)
+			code.data += code.row
+		}
+	}
+
+	code.title = html.div('edit ' + table, {class:table + '-action-title'})
+
+	code.results = code.title + html.table(code.data)
+
+	code.display = code.display.replace('{Results}', code.results)
+
+	code.main = main.innerHTML
+	code.main = code.main.replace('{Display}', code.display)
+
+	page.innerHTML = code.main
+}
+
+function Update(table, id, criteria, value)
+{
+	const code = 
+		{criteria:'{"criteria":{"' + criteria + '":"' + value + '"}, "where":{"id":"' + id + '"}}'
+		}
+
+	const request = Request('PUT', link.route[table].update, code.criteria)
+
+	request.onload = function() 
+	{
+		code.display = display.innerHTML
+		code.display = code.display.replace('{Subtitle}', table)
+		code.display = code.display.replace(/{Table}/g, table)
+
+		if (request.status != 200) 
+                {
+			code.display = code.display.replace('{Results}', html.div('Error Update() ' + table + ': ' + request.status + ': ' + request.statusText))
+		}
+		else
+		{
+			code.criteria = '{"id":' + id + '}'
+			const request = Request('GET', link.route[table].find, code.criteria)
+			request.onload = function() 
+			{
+				if (request.status != 201) 
+                		{
+					code.display = code.display.replace('{Results}', html.div('Error Update() find ' + table + '(id:' + id + '): ' + request.status + ': ' + request.statusText))
+					code.main = main.innerHTML
+					code.main = code.main.replace('{Display}', code.display)
+
+					page.innerHTML = code.main
+				}
+				else
+				{
+					let data = JSON.parse(request.response)
+					View(table, data[table][0], data[table][0].id + ' has been updated successfully')
+				}
+			}
+		}
 	}
 }
 
